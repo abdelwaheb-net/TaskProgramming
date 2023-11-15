@@ -29,6 +29,24 @@ namespace TaskProgramming
 
         static void Main(string[] args)
         {
+            var planned = new CancellationTokenSource();
+            var preventative = new CancellationTokenSource();
+            var emergency = new CancellationTokenSource();
+
+            var paranoid = CancellationTokenSource.CreateLinkedTokenSource(planned.Token, preventative.Token, emergency.Token);
+            Task.Factory.StartNew(() =>
+            {
+                int i = 0;
+                while (true)
+                {
+                    paranoid.Token.ThrowIfCancellationRequested();
+                    Console.WriteLine($"{i++}\t");
+                    Thread.Sleep(1000);
+                }
+            },paranoid.Token);
+            Console.ReadKey();
+            emergency.Cancel();
+            /*
             var cts = new CancellationTokenSource();
             var token = cts.Token;
             token.Register(() => { Console.WriteLine("Cancellation has been requested"); });
@@ -60,7 +78,7 @@ namespace TaskProgramming
             Task1.Start();
 
             Console.WriteLine($"the length of {text1} is {Task1.Result}");
-            Console.WriteLine($"the length of {text2}is {Task2.Result}");
+            Console.WriteLine($"the length of {text2}is {Task2.Result}");*/
 
            /* Task.Factory.StartNew(() => Write('.'));
             var t = new Task(() => Write('?'));
