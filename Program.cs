@@ -29,61 +29,22 @@ namespace TaskProgramming
 
         static void Main(string[] args)
         {
-            var planned = new CancellationTokenSource();
-            var preventative = new CancellationTokenSource();
-            var emergency = new CancellationTokenSource();
+            //Thread.SpinWait(100000000);
+            //SpinWait.SpinUntil();
 
-            var paranoid = CancellationTokenSource.CreateLinkedTokenSource(planned.Token, preventative.Token, emergency.Token);
-            Task.Factory.StartNew(() =>
-            {
-                int i = 0;
-                while (true)
-                {
-                    paranoid.Token.ThrowIfCancellationRequested();
-                    Console.WriteLine($"{i++}\t");
-                    Thread.Sleep(1000);
-                }
-            },paranoid.Token);
-            Console.ReadKey();
-            emergency.Cancel();
-            /*
             var cts = new CancellationTokenSource();
             var token = cts.Token;
-            token.Register(() => { Console.WriteLine("Cancellation has been requested"); });
-            var t = new Task(() =>
-            {
-                int i = 0;
-                while (true)
-                {
-                    if (token.IsCancellationRequested)
-                        //token.ThrowIfCancellationRequested();
-                        //throw new OperationCanceledException();
-                        break;
-                    Console.WriteLine($"{i++}");
+            var task = new Task(()=> {
+                Console.WriteLine("Press Any key to disarm, you have 5 second to disarm");
+                bool cancelled=token.WaitHandle.WaitOne(5000);
+                Console.WriteLine(cancelled?"Bomb Disarmed":"Boom!!!");
 
-                }
-             },token);
-            t.Start();
-
-            Task.Factory.StartNew(() => { token.WaitHandle.WaitOne(); Console.WriteLine("wait handle released,cancellation was requested"); });
-
+            },token);
+            task.Start();
             Console.ReadKey();
             cts.Cancel();
-
-            var text1 = "This";
-            var text2 = "Testing";
-
-            var Task1=new Task<int>(TestingText, text1);
-            Task<int> Task2 = Task.Factory.StartNew(TestingText, text2);
-            Task1.Start();
-
-            Console.WriteLine($"the length of {text1} is {Task1.Result}");
-            Console.WriteLine($"the length of {text2}is {Task2.Result}");*/
-
-           /* Task.Factory.StartNew(() => Write('.'));
-            var t = new Task(() => Write('?'));
-            t.Start();
-            Write('-');*/
+            
+          
             Console.WriteLine("Main Program Done.");
             Console.ReadKey();
         }
