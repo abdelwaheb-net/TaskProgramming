@@ -34,17 +34,29 @@ namespace TaskProgramming
 
             var cts = new CancellationTokenSource();
             var token = cts.Token;
-            var task = new Task(()=> {
-                Console.WriteLine("Press Any key to disarm, you have 5 second to disarm");
-                bool cancelled=token.WaitHandle.WaitOne(5000);
-                Console.WriteLine(cancelled?"Bomb Disarmed":"Boom!!!");
+            var t = new Task(()=> {
+                Console.WriteLine("I Take 5 seconds");
+                for (int i = 0; i < 5; i++)
+                {
+                    token.ThrowIfCancellationRequested();
+                    Thread.Sleep(1000);
+                  
+                }
+                
+                Console.WriteLine("I'm done");
 
             },token);
-            task.Start();
-            Console.ReadKey();
-            cts.Cancel();
+            t.Start();
             
+           var t2=Task.Factory.StartNew(() => { Thread.Sleep(3000); },token);
+            //Console.ReadKey();
+            //cts.Cancel();
+            //Task.WaitAll(t, t2);
+            Task.WaitAll(new[] { t, t2 },4000,token);
           
+            Console.WriteLine($"Task t status is{t.Status}");
+            Console.WriteLine($"Task t2 status is{t2.Status}");
+
             Console.WriteLine("Main Program Done.");
             Console.ReadKey();
         }
