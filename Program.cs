@@ -40,7 +40,7 @@ namespace TaskProgramming
                 {
                     token.ThrowIfCancellationRequested();
                     Thread.Sleep(1000);
-                  
+                    Console.WriteLine($"{i}s");
                 }
                 
                 Console.WriteLine("I'm done");
@@ -48,7 +48,7 @@ namespace TaskProgramming
             },token);
             t.Start();
             
-           var t2=Task.Factory.StartNew(() => { Thread.Sleep(3000); },token);
+           var t2=Task.Factory.StartNew(() => { Console.WriteLine("begining Task2"); Thread.Sleep(3000); Console.WriteLine("End Task 2 after 3 seconds"); },token);
             //Console.ReadKey();
             //cts.Cancel();
             //Task.WaitAll(t, t2);
